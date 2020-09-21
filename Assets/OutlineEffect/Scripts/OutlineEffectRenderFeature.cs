@@ -6,10 +6,19 @@
  * Released under MIT license. Please see LICENSE file for details.
  */
 
+using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
 public class OutlineEffectRenderFeature : ScriptableRendererFeature
 {
+    [System.Serializable]
+    public class OutlineEffectSettings
+    {
+        public RenderPassEvent RenderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
+        public Shader Shader; // Referencing shader through here to avoid having to use Shader.Find + resources folders
+    }
+
+    public OutlineEffectSettings settings = new OutlineEffectSettings();
     OutlineEffectRenderPass outlineEffectRenderPass;
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
@@ -20,6 +29,6 @@ public class OutlineEffectRenderFeature : ScriptableRendererFeature
 
     public override void Create()
     {
-        outlineEffectRenderPass = new OutlineEffectRenderPass(RenderPassEvent.BeforeRenderingPostProcessing);
+        outlineEffectRenderPass = new OutlineEffectRenderPass(settings.RenderPassEvent, settings.Shader);
     }
 }

@@ -13,11 +13,11 @@ using UnityEngine.Rendering.Universal;
 public class OutlineEffect : VolumeComponent, IPostProcessComponent
 {
     [Tooltip("Effect color")]
-    public ColorParameter screenColor = new ColorParameter(new Color(1, 0, 0));
+    public ColorParameter screenColor = new ColorParameter(new Color(1, 1, 1));
 
     public bool IsActive()
     {
-        return true;
+        return screenColor.value != Color.white;
     }
 
     public bool IsTileCompatible()

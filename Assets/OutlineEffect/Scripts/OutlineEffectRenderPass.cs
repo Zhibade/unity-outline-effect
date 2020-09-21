@@ -13,22 +13,22 @@ using UnityEngine.Rendering.Universal;
 public class OutlineEffectRenderPass : ScriptableRenderPass
 {
     static readonly string COLOR_PROPERTY_NAME = "_ScreenColor";
-    static readonly string MAIN_TEXTURE_PROPERTY_NAME = "_MainTex";
+    static readonly int MAIN_TEXTURE_PROPERTY_ID = Shader.PropertyToID("_MainTex");
     static readonly int TEMP_RENDER_TARGET_PROPERTY_ID = Shader.PropertyToID("_TempRenderTarget");
 
     static readonly string OUTLINE_EFFECT_TAG = "Outline Effect";
-    static readonly string OUTLINE_EFFECT_SHADER = "Hidden/OutlineEffect";
 
     Material material;
     OutlineEffect outlineEffect;
     RenderTargetIdentifier renderTargetIdentifier;
 
-    public OutlineEffectRenderPass(RenderPassEvent renderPassEvent)
+    public OutlineEffectRenderPass(RenderPassEvent renderPassEvent, Shader shader)
     {
-        Shader shader = Shader.Find(OUTLINE_EFFECT_SHADER);
+        this.renderPassEvent = renderPassEvent;
+
         if (shader == null)
         {
-            Debug.LogError("Outline effect shader not found: " + OUTLINE_EFFECT_SHADER);
+            Debug.LogError("Outline effect shader not found");
             return;
         }
 
@@ -52,6 +52,9 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
 
         CommandBuffer buffer = CommandBufferPool.Get(OUTLINE_EFFECT_TAG);
         Render(buffer, ref renderingData);
+
+        context.ExecuteCommandBuffer(buffer);
+        CommandBufferPool.Release(buffer);
     }
 
     public void Setup(in RenderTargetIdentifier targetIdentifier)
@@ -63,17 +66,18 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
     {
         ref CameraData cameraData = ref data.cameraData;
         RenderTargetIdentifier sourceRenderTarget = renderTargetIdentifier;
+        int targetRenderTarget = TEMP_RENDER_TARGET_PROPERTY_ID;
 
         int screenWidth = cameraData.camera.scaledPixelWidth;
         int screenHeight = cameraData.camera.scaledPixelHeight;
 
         material.SetColor(COLOR_PROPERTY_NAME, outlineEffect.screenColor.value);
 
-        // Copy to temp render target and render to render target
+        // Copy to temporary render target and render to actual render target
 
-        buffer.SetGlobalTexture(MAIN_TEXTURE_PROPERTY_NAME, sourceRenderTarget);
-        buffer.GetTemporaryRT(TEMP_RENDER_TARGET_PROPERTY_ID, screenWidth, screenHeight, 0, FilterMode.Point, RenderTextureFormat.Default);
-        buffer.Blit(sourceRenderTarget, TEMP_RENDER_TARGET_PROPERTY_ID);
-        buffer.Blit(TEMP_RENDER_TARGET_PROPERTY_ID, sourceRenderTarget, material, 0);
+        buffer.SetGlobalTexture(MAIN_TEXTURE_PROPERTY_ID, sourceRenderTarget);
+        buffer.GetTemporaryRT(targetRenderTarget, screenWidth, screenHeight, 0, FilterMode.Point, RenderTextureFormat.Default);
+        buffer.Blit(sourceRenderTarget, targetRenderTarget);
+        buffer.Blit(targetRenderTarget, sourceRenderTarget, material, 0);
     }
 }
