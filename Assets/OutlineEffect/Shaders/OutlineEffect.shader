@@ -11,7 +11,13 @@ Shader "Hidden/OutlineEffect"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
-        _ScreenColor ("Screen Color", Color) = (1, 0, 0, 1)
+
+        _OutlineStrength ("Outline Strength", Range(0, 1)) = 1.0
+        _OutlineWidth ("Outline Width", Int) = 2
+        _OutlineCutoff ("Outline Cutoff", Range(0,1)) = 0.001
+
+        _FillStrength ("Fill Strength", Range(0, 1)) = 1.0
+        _FillColor ("Fill Color", Color) = (1, 0, 0, 1)
     }
     SubShader
     {
@@ -25,6 +31,9 @@ Shader "Hidden/OutlineEffect"
             #pragma vertex vert
             #pragma fragment frag
 
+            #include "UnityCG.cginc"
+            #include "OutlineEffectLib.cginc"
+
             struct appdata
             {
                 float4 vertex : POSITION;
@@ -33,8 +42,8 @@ Shader "Hidden/OutlineEffect"
 
             struct v2f
             {
-                float2 uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
+                float2 uv : TEXCOORD0;
             };
 
             v2f vert (appdata v)
@@ -46,14 +55,25 @@ Shader "Hidden/OutlineEffect"
             }
 
             sampler2D _MainTex;
-            fixed4 _ScreenColor;
+            sampler2D _CameraDepthTexture; // Depth-buffer already provided by the engine
+
+            fixed _OutlineStrength;
+            int _OutlineWidth;
+            float _OutlineCutoff;
+
+            fixed _FillStrength;
+            fixed4 _FillColor;
 
             fixed4 frag (v2f i) : SV_Target
             {
                 fixed4 color = tex2D(_MainTex, i.uv);
-                color.rgb *= _ScreenColor.rgb;
-                
-                return color;
+
+                fixed outlineMask = GetDepthBasedOutline(_CameraDepthTexture, _ScreenParams, i.uv, _OutlineWidth, _OutlineCutoff); // White = outline
+                outlineMask = 1 - outlineMask; // Invert mask so that the outline is black
+                outlineMask = lerp(1, outlineMask, _OutlineStrength); // Apply outline strength
+
+                fixed4 composite = lerp(color * outlineMask, _FillColor * outlineMask, _FillStrength); // Composite with camera render
+                return composite;
             }
             ENDCG
         }

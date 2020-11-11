@@ -28,9 +28,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   active: 1
   m_AdvancedMode: 0
-  screenColor:
-    m_OverrideState: 1
-    m_Value: {r: 0.88539034, g: 1, b: 0.15566039, a: 1}
+  outlineStrength:
+    m_OverrideState: 0
+    m_Value: 1
+  outlineWidth:
+    m_OverrideState: 0
+    m_Value: 2
+  outlineCutoffValue:
+    m_OverrideState: 0
+    m_Value: 0.001
+  fillStrength:
+    m_OverrideState: 0
+    m_Value: 0.2
+  fillColor:
+    m_OverrideState: 0
+    m_Value: {r: 0.90588, g: 0.90588, b: 0.83922, a: 1}
     hdr: 0
     showAlpha: 1
     showEyeDropper: 1

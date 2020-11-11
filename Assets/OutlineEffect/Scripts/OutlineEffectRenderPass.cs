@@ -12,7 +12,13 @@ using UnityEngine.Rendering.Universal;
 
 public class OutlineEffectRenderPass : ScriptableRenderPass
 {
-    static readonly string COLOR_PROPERTY_NAME = "_ScreenColor";
+    static readonly string COLOR_PROPERTY_NAME = "_FillColor";
+    static readonly string COLOR_STRENGTH_PROPERTY_NAME = "_FillStrength";
+
+    static readonly string OUTLINE_STRENGTH_PROPERTY_NAME = "_OutlineStrength";
+    static readonly string OUTLINE_WIDTH_PROPERTY_NAME = "_OutlineWidth";
+    static readonly string OUTLINE_CUTOFF_PROPERTY_NAME = "_OutlineCutoff";
+
     static readonly int MAIN_TEXTURE_PROPERTY_ID = Shader.PropertyToID("_MainTex");
     static readonly int TEMP_RENDER_TARGET_PROPERTY_ID = Shader.PropertyToID("_TempRenderTarget");
 
@@ -71,7 +77,12 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
         int screenWidth = cameraData.camera.scaledPixelWidth;
         int screenHeight = cameraData.camera.scaledPixelHeight;
 
-        material.SetColor(COLOR_PROPERTY_NAME, outlineEffect.screenColor.value);
+        material.SetFloat(OUTLINE_STRENGTH_PROPERTY_NAME, outlineEffect.outlineStrength.value);
+        material.SetInt(OUTLINE_WIDTH_PROPERTY_NAME, outlineEffect.outlineWidth.value);
+        material.SetFloat(OUTLINE_CUTOFF_PROPERTY_NAME, outlineEffect.outlineCutoffValue.value);
+
+        material.SetColor(COLOR_PROPERTY_NAME, outlineEffect.fillColor.value);
+        material.SetFloat(COLOR_STRENGTH_PROPERTY_NAME, outlineEffect.fillStrength.value);
 
         // Copy to temporary render target and render to actual render target
 
