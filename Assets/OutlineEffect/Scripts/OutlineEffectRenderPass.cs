@@ -18,6 +18,8 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
     static readonly string OUTLINE_STRENGTH_PROPERTY_NAME = "_OutlineStrength";
     static readonly string OUTLINE_WIDTH_PROPERTY_NAME = "_OutlineWidth";
     static readonly string OUTLINE_CUTOFF_PROPERTY_NAME = "_OutlineCutoff";
+    static readonly string OUTLINE_NEAR_DISTANCE_PROPERTY_NAME = "_OutlineNearLimit";
+    static readonly string OUTLINE_FAR_DISTANCE_PROPERTY_NAME = "_OutlineFarLimit";
 
     static readonly int MAIN_TEXTURE_PROPERTY_ID = Shader.PropertyToID("_MainTex");
     static readonly int TEMP_RENDER_TARGET_PROPERTY_ID = Shader.PropertyToID("_TempRenderTarget");
@@ -80,6 +82,8 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
         material.SetFloat(OUTLINE_STRENGTH_PROPERTY_NAME, outlineEffect.outlineStrength.value);
         material.SetInt(OUTLINE_WIDTH_PROPERTY_NAME, outlineEffect.outlineWidth.value);
         material.SetFloat(OUTLINE_CUTOFF_PROPERTY_NAME, outlineEffect.outlineCutoffValue.value);
+        material.SetFloat(OUTLINE_NEAR_DISTANCE_PROPERTY_NAME, outlineEffect.outlineNearAndFarLimits.value.x);
+        material.SetFloat(OUTLINE_FAR_DISTANCE_PROPERTY_NAME, outlineEffect.outlineNearAndFarLimits.value.y);
 
         material.SetColor(COLOR_PROPERTY_NAME, outlineEffect.fillColor.value);
         material.SetFloat(COLOR_STRENGTH_PROPERTY_NAME, outlineEffect.fillStrength.value);

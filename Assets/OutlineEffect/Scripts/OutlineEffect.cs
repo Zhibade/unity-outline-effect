@@ -21,6 +21,9 @@ public class OutlineEffect : VolumeComponent, IPostProcessComponent
     [Tooltip("Depth cutoff value for the outline. Smaller values show smaller details with an outline")]
     public FloatParameter outlineCutoffValue = new FloatParameter(0.001f);
 
+    [Tooltip("Near and far distance limits for the outline in meters.")]
+    public Vector2Parameter outlineNearAndFarLimits = new Vector2Parameter(new Vector2(0.0001f, 10000f));
+
     [Tooltip("Fill color strength. A value of 1 completely hides the original render")]
     public FloatParameter fillStrength = new FloatParameter(1.0f);
 
@@ -31,8 +34,9 @@ public class OutlineEffect : VolumeComponent, IPostProcessComponent
     {
         bool isOutlineOrFillColorShown = outlineStrength.value > 0.0f || fillStrength.value > 0.0f;
         bool isCutoffValueValid = outlineCutoffValue.value < 1.0f;
+        bool areNearAndFarDistancesValid = outlineNearAndFarLimits.value.x < outlineNearAndFarLimits.value.y;
 
-        return isOutlineOrFillColorShown && isCutoffValueValid;
+        return isOutlineOrFillColorShown && isCutoffValueValid && areNearAndFarDistancesValid;
     }
 
     public bool IsTileCompatible()
