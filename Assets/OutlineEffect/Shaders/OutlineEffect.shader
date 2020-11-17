@@ -15,8 +15,7 @@ Shader "Hidden/OutlineEffect"
         _OutlineStrength ("Outline Strength", Range(0, 1)) = 1.0
         _OutlineWidth ("Outline Width", Int) = 2
         _OutlineCutoff ("Outline Cutoff", Range(0,1)) = 0.001
-        _OutlineNearLimit ("Outline Near Distance Limit", Range(0, 1000000)) = 0.00001
-        _OutlineFarLimit ("Outline Far Distance Limit", Range(0, 1000000)) = 10000
+        _OutlineNearAndFarFadeOut ("Outline Near and Far Fade Out Limits", Vector) = (0.00001, 0.00001, 10000, 10000)
 
         _FillStrength ("Fill Strength", Range(0, 1)) = 1.0
         _FillColor ("Fill Color", Color) = (1, 0, 0, 1)
@@ -62,8 +61,7 @@ Shader "Hidden/OutlineEffect"
             fixed _OutlineStrength;
             int _OutlineWidth;
             float _OutlineCutoff;
-            float _OutlineNearLimit;
-            float _OutlineFarLimit;
+            float4 _OutlineNearAndFarFadeOut;
 
             fixed _FillStrength;
             fixed4 _FillColor;
@@ -72,8 +70,11 @@ Shader "Hidden/OutlineEffect"
             {
                 fixed4 color = tex2D(_MainTex, i.uv);
 
+                float4 nearAndFarFadeOut = float4(_OutlineNearAndFarFadeOut.x, _OutlineNearAndFarFadeOut.y,
+                                                  _OutlineNearAndFarFadeOut.z, _OutlineNearAndFarFadeOut.w);
+
                 fixed outlineMask = GetDepthBasedOutline(_CameraDepthTexture, _ScreenParams, i.uv,
-                                                         _OutlineWidth, _OutlineCutoff, float2(_OutlineNearLimit, _OutlineFarLimit)); // White = outline
+                                                         _OutlineWidth, _OutlineCutoff, nearAndFarFadeOut); // White = outline
 
                 outlineMask = 1 - outlineMask; // Invert mask so that the outline is black
                 outlineMask = lerp(1, outlineMask, _OutlineStrength); // Apply outline strength
