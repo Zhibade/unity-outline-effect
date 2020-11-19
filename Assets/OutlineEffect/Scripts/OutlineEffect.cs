@@ -12,6 +12,9 @@ using UnityEngine.Rendering.Universal;
 
 public class OutlineEffect : VolumeComponent, IPostProcessComponent
 {
+    [Tooltip("Outline color")]
+    public ColorParameter outlineColor = new ColorParameter(new Color(0f, 0f, 0f));
+
     [Tooltip("Strength of the outline around objects")]
     public FloatParameter outlineStrength = new FloatParameter(1.0f);
 

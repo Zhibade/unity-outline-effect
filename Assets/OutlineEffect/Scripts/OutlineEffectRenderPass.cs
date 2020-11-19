@@ -15,6 +15,7 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
     static readonly string COLOR_PROPERTY_NAME = "_FillColor";
     static readonly string COLOR_STRENGTH_PROPERTY_NAME = "_FillStrength";
 
+    static readonly string OUTLINE_COLOR_PROPERTY_NAME = "_OutlineColor";
     static readonly string OUTLINE_STRENGTH_PROPERTY_NAME = "_OutlineStrength";
     static readonly string OUTLINE_WIDTH_PROPERTY_NAME = "_OutlineWidth";
     static readonly string OUTLINE_CUTOFF_PROPERTY_NAME = "_OutlineCutoff";
@@ -81,6 +82,7 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
         Vector4 fadeOutDistances = new Vector4(outlineEffect.outlineNearFadeOutLimits.value.x, outlineEffect.outlineNearFadeOutLimits.value.y,
                                                outlineEffect.outlineFarFadeOutLimits.value.x, outlineEffect.outlineFarFadeOutLimits.value.y);
 
+        material.SetColor(OUTLINE_COLOR_PROPERTY_NAME, outlineEffect.outlineColor.value);
         material.SetFloat(OUTLINE_STRENGTH_PROPERTY_NAME, outlineEffect.outlineStrength.value);
         material.SetInt(OUTLINE_WIDTH_PROPERTY_NAME, outlineEffect.outlineWidth.value);
         material.SetFloat(OUTLINE_CUTOFF_PROPERTY_NAME, outlineEffect.outlineCutoffValue.value);

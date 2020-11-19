@@ -12,6 +12,7 @@ Shader "Hidden/OutlineEffect"
     {
         _MainTex ("Texture", 2D) = "white" {}
 
+        _OutlineColor ("Outline Color", Color) = (0, 0, 0, 1)
         _OutlineStrength ("Outline Strength", Range(0, 1)) = 1.0
         _OutlineWidth ("Outline Width", Int) = 2
         _OutlineCutoff ("Outline Cutoff", Range(0,1)) = 0.001
@@ -58,6 +59,7 @@ Shader "Hidden/OutlineEffect"
             sampler2D _MainTex;
             sampler2D _CameraDepthTexture; // Depth-buffer already provided by the engine
 
+            fixed4 _OutlineColor;
             fixed _OutlineStrength;
             int _OutlineWidth;
             float _OutlineCutoff;
@@ -68,7 +70,8 @@ Shader "Hidden/OutlineEffect"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                fixed4 color = tex2D(_MainTex, i.uv);
+                fixed4 render = tex2D(_MainTex, i.uv);
+                fixed4 bgRenderComposite = lerp(render, _FillColor, _FillStrength);
 
                 float4 nearAndFarFadeOut = float4(_OutlineNearAndFarFadeOut.x, _OutlineNearAndFarFadeOut.y,
                                                   _OutlineNearAndFarFadeOut.z, _OutlineNearAndFarFadeOut.w);
@@ -76,10 +79,7 @@ Shader "Hidden/OutlineEffect"
                 fixed outlineMask = GetDepthBasedOutline(_CameraDepthTexture, _ScreenParams, i.uv,
                                                          _OutlineWidth, _OutlineCutoff, nearAndFarFadeOut); // White = outline
 
-                outlineMask = 1 - outlineMask; // Invert mask so that the outline is black
-                outlineMask = lerp(1, outlineMask, _OutlineStrength); // Apply outline strength
-
-                fixed4 composite = lerp(color * outlineMask, _FillColor * outlineMask, _FillStrength); // Composite with camera render
+                fixed4 composite = lerp(bgRenderComposite, _OutlineColor, outlineMask * _OutlineStrength); // Composite with background
                 return composite;
             }
             ENDCG
