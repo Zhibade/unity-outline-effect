@@ -16,13 +16,13 @@ public class OutlineEffect : VolumeComponent, IPostProcessComponent
     public ColorParameter outlineColor = new ColorParameter(new Color(0f, 0f, 0f));
 
     [Tooltip("Strength of the outline around objects")]
-    public FloatParameter outlineStrength = new FloatParameter(1.0f);
+    public ClampedFloatParameter outlineStrength = new ClampedFloatParameter(1f, 0f, 1f);
 
     [Tooltip("Width of the outline around objects")]
-    public IntParameter outlineWidth = new IntParameter(2);
+    public ClampedIntParameter outlineWidth = new ClampedIntParameter(2, 1, 20);
 
     [Tooltip("Depth cutoff value for the outline. Smaller values show smaller details with an outline")]
-    public FloatParameter outlineCutoffValue = new FloatParameter(0.001f);
+    public ClampedFloatParameter outlineCutoffValue = new ClampedFloatParameter(0.001f, 0.00001f, 0.9f);
 
     [Tooltip("Start and end near fade out distance in meters.")]
     public Vector2Parameter outlineNearFadeOutLimits = new Vector2Parameter(new Vector2(0.0001f, 0.0001f));
@@ -31,7 +31,7 @@ public class OutlineEffect : VolumeComponent, IPostProcessComponent
     public Vector2Parameter outlineFarFadeOutLimits = new Vector2Parameter(new Vector2(10000f, 10000f));
 
     [Tooltip("Fill color strength. A value of 1 completely hides the original render")]
-    public FloatParameter fillStrength = new FloatParameter(1.0f);
+    public ClampedFloatParameter fillStrength = new ClampedFloatParameter(1f, 0f, 1f);
 
     [Tooltip("Fill color")]
     public ColorParameter fillColor = new ColorParameter(new Color(0.90588f, 0.90588f, 0.83922f));
