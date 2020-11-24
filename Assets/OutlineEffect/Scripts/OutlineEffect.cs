@@ -12,6 +12,9 @@ using UnityEngine.Rendering.Universal;
 
 public class OutlineEffect : VolumeComponent, IPostProcessComponent
 {
+    [Tooltip("Enable or disable the entire outline effect")]
+    public BoolParameter isEnabled = new BoolParameter(false);
+
     [Tooltip("Outline color")]
     public ColorParameter outlineColor = new ColorParameter(new Color(0f, 0f, 0f));
 
@@ -38,6 +41,11 @@ public class OutlineEffect : VolumeComponent, IPostProcessComponent
 
     public bool IsActive()
     {
+        if (!isEnabled.value)
+        {
+            return false;
+        }
+
         bool isOutlineOrFillColorShown = outlineStrength.value > 0.0f || fillStrength.value > 0.0f;
         bool isCutoffValueValid = outlineCutoffValue.value < 1.0f;
         bool areNearAndFarDistancesValid = outlineNearFadeOutLimits.value.y <= outlineFarFadeOutLimits.value.x;

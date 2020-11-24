@@ -13,6 +13,7 @@ using UnityEditor.Rendering;
 [VolumeComponentEditor(typeof(OutlineEffect))]
 sealed class OutlineEffectEditor : VolumeComponentEditor
 {
+    SerializedDataParameter isEnabled;
     SerializedDataParameter outlineColor;
     SerializedDataParameter outlineStrength;
     SerializedDataParameter outlineWidth;
@@ -26,6 +27,7 @@ sealed class OutlineEffectEditor : VolumeComponentEditor
     {
         PropertyFetcher<OutlineEffect> propertyFetcher = new PropertyFetcher<OutlineEffect>(serializedObject);
 
+        isEnabled = Unpack(propertyFetcher.Find(x => x.isEnabled));
         outlineColor = Unpack(propertyFetcher.Find(x => x.outlineColor));
         outlineStrength = Unpack(propertyFetcher.Find(x => x.outlineStrength));
         outlineWidth = Unpack(propertyFetcher.Find(x => x.outlineWidth));
@@ -38,6 +40,10 @@ sealed class OutlineEffectEditor : VolumeComponentEditor
 
     public override void OnInspectorGUI()
     {
+        EditorGUILayout.LabelField("General", EditorStyles.miniLabel);
+
+        PropertyField(isEnabled, EditorGUIUtility.TrTextContent("Enable"));
+
         EditorGUILayout.LabelField("Outline", EditorStyles.miniLabel);
 
         PropertyField(outlineColor, EditorGUIUtility.TrTextContent("Color"));

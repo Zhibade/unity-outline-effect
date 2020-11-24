@@ -21,6 +21,7 @@ Outline post process effect implementation in the Unity's universal pipeline.
   - *Project Settings* -> *Graphics* -> *Scriptable Render Pipeline Settings*
   - *Project Settings* -> *Quality* -> *Rendering*
 - On any [volume](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/Volumes.html) in the scene just add the *Outline Effect* override
+- Check the *Enable* checkbox to turn on the effect
 - Change any of the settings as desired
 
 
@@ -29,6 +30,7 @@ Outline post process effect implementation in the Unity's universal pipeline.
 - Select your custom render pipeline *_Renderer* asset and under *Renderer Features* add the *Outline Effect Render Feature*
 - Under the newly added renderer feature, go to *Settings* -> *Shader* and assign the *OutlineEffect* shader 
 - On any [volume](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/Volumes.html) in the scene just add the *Outline Effect* override
+- Check the *Enable* checkbox to turn on the effect
 - Change any of the settings as desired
 
 
@@ -50,6 +52,7 @@ Unityのユニバーサルレンダリングパイプラインでの輪郭のポ
   - *Project Settings* -> *Graphics* -> *Scriptable Render Pipeline Settings*
   - *Project Settings* -> *Quality* -> *Rendering*
 - シーンにある[volume](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/Volumes.html)に*Outline Effect*のオーバーライドを追加します
+- Volumeで*Enable*のトグルを有効にするとエフェクトは有効になります
 - Volumeでエフェクトの設定を変更できます
 
 
@@ -58,4 +61,5 @@ Unityのユニバーサルレンダリングパイプラインでの輪郭のポ
 - カスタム「Render Pipeline Asset」の*_Renderer*の接尾語あるアセットをクリックして、*Renderer Features*の下に*Outline Effect Render Feature*を追加します
 - 追加された*Outline Effect Render Feature*の下に、*Settings/Shader*に*OutlineEffect*のシェーダを割り当てます
 - シーンにある[volume](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/Volumes.html)に*Outline Effect*のオーバーライドを追加します
+- Volumeで*Enable*のトグルを有効にするとエフェクトは有効になります
 - Volumeでエフェクトの設定を変更できます
