@@ -18,13 +18,13 @@ public class OutlineEffect : VolumeComponent, IPostProcessComponent
     [Tooltip("Outline color")]
     public ColorParameter outlineColor = new ColorParameter(new Color(0f, 0f, 0f));
 
-    [Tooltip("Strength of the outline around objects")]
+    [Tooltip("Strength of the depth-based outline around objects")]
     public ClampedFloatParameter outlineStrength = new ClampedFloatParameter(1f, 0f, 1f);
 
-    [Tooltip("Width of the outline around objects")]
+    [Tooltip("Width of the depth-based outline around objects")]
     public ClampedIntParameter outlineWidth = new ClampedIntParameter(2, 1, 20);
 
-    [Tooltip("Depth cutoff value for the outline. Smaller values show smaller details with an outline")]
+    [Tooltip("Depth cutoff value for the depth-based outline. Smaller values show smaller details with an outline")]
     public ClampedFloatParameter outlineCutoffValue = new ClampedFloatParameter(0.001f, 0.00001f, 0.9f);
 
     [Tooltip("Start and end near fade out distance in meters.")]
@@ -32,6 +32,15 @@ public class OutlineEffect : VolumeComponent, IPostProcessComponent
 
     [Tooltip("Start and end far fade out distance in meters.")]
     public Vector2Parameter outlineFarFadeOutLimits = new Vector2Parameter(new Vector2(10000f, 10000f));
+
+    [Tooltip("Strength of the normal-based outline around objects")]
+    public ClampedFloatParameter normalOutlineStrength = new ClampedFloatParameter(1f, 0f, 1f);
+
+    [Tooltip("Width of the normal-based outline around objects")]
+    public ClampedIntParameter normalOutlineWidth = new ClampedIntParameter(1, 1, 20);
+
+    [Tooltip("Depth cutoff value for the normal-based outline. Smaller values show smaller details with an outline")]
+    public ClampedFloatParameter normalOutlineCutoffValue = new ClampedFloatParameter(0.1f, 0.00001f, 0.9f);
 
     [Tooltip("Fill color strength. A value of 1 completely hides the original render")]
     public ClampedFloatParameter fillStrength = new ClampedFloatParameter(1f, 0f, 1f);
@@ -46,8 +55,8 @@ public class OutlineEffect : VolumeComponent, IPostProcessComponent
             return false;
         }
 
-        bool isOutlineOrFillColorShown = outlineStrength.value > 0.0f || fillStrength.value > 0.0f;
-        bool isCutoffValueValid = outlineCutoffValue.value < 1.0f;
+        bool isOutlineOrFillColorShown = outlineStrength.value > 0.0f || fillStrength.value > 0.0f || normalOutlineStrength.value > 0.0f;
+        bool isCutoffValueValid = outlineCutoffValue.value < 1.0f && normalOutlineCutoffValue.value < 1.0f;
         bool areNearAndFarDistancesValid = outlineNearFadeOutLimits.value.y <= outlineFarFadeOutLimits.value.x;
 
         return isOutlineOrFillColorShown && isCutoffValueValid && areNearAndFarDistancesValid;

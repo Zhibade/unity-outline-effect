@@ -13,8 +13,9 @@ MonoBehaviour:
   m_Name: OutlineEffectRenderPipelineAsset_Renderer
   m_EditorClassIdentifier: 
   m_RendererFeatures:
+  - {fileID: 702845987029612552}
   - {fileID: 4526095354055589173}
-  m_RendererFeatureMap: 357d0786beebcf3e
+  m_RendererFeatureMap: 0878b58cb302c109357d0786beebcf3e
   postProcessData: {fileID: 11400000, guid: 41439944d30ece34e96484bdb6645b55, type: 2}
   shaders:
     blitPS: {fileID: 4800000, guid: c17132b1f77d20942aa75f8429c0f8bc, type: 3}
@@ -36,6 +37,19 @@ MonoBehaviour:
     failOperation: 0
     zFailOperation: 0
   m_ShadowTransparentReceive: 1
+--- !u!114 &702845987029612552
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: da2d6a1a79efd354383ed453736618b2, type: 3}
+  m_Name: DepthNormalsRenderFeature
+  m_EditorClassIdentifier: 
+  m_Active: 1
 --- !u!114 &4526095354055589173
 MonoBehaviour:
   m_ObjectHideFlags: 0

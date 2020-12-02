@@ -7,6 +7,8 @@
 
 Outline post process effect implementation in the Unity's universal pipeline.
 
+It uses depth + normal buffers to generate the outline.
+
 
 # How to use (on this project)
 - Open the project
@@ -24,14 +26,24 @@ Outline post process effect implementation in the Unity's universal pipeline.
 - Check the *Enable* checkbox to turn on the effect
 - Change any of the settings as desired
 
+**NOTE:** Make sure that the following settings are enabled on the main [camera](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/camera-component-reference.html):
+  - *Post Processing*
+  - *Depth Texture*
+
 
 # How to use (different project with a custom [Render Pipeline Asset](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/universalrp-asset.html))
 - Import the *Package/OutlineEffect.unitypackage* included in this repository into the other project
-- Select your custom render pipeline *_Renderer* asset and under *Renderer Features* add the *Outline Effect Render Feature*
-- Under the newly added renderer feature, go to *Settings* -> *Shader* and assign the *OutlineEffect* shader 
+- Select your custom render pipeline *_Renderer* asset and under *Renderer Features* add the following render features in the same order:
+  - *Depth Normals Render Feature*
+  - *Outline Effect Render Feature*
+- Under the newly added *Outline Effect Render Feature*, go to *Settings* -> *Shader* and assign the *OutlineEffect* shader 
 - On any [volume](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/Volumes.html) in the scene just add the *Outline Effect* override
 - Check the *Enable* checkbox to turn on the effect
 - Change any of the settings as desired
+
+**NOTE:** Make sure that the following settings are enabled on the main [camera](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/camera-component-reference.html):
+  - *Post Processing*
+  - *Depth Texture*
 
 
 
@@ -55,11 +67,21 @@ Unityのユニバーサルレンダリングパイプラインでの輪郭のポ
 - Volumeで*Enable*のトグルを有効にするとエフェクトは有効になります
 - Volumeでエフェクトの設定を変更できます
 
+**ご注意:** カメラに下記の設定をONにしてください：
+  - *Post Processing*
+  - *Depth Texture*
+
 
 # 使い方（別のプロジェクト。カスタム「[Render Pipeline Asset](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/universalrp-asset.html)」がある場合）
 - このリポジトリの*Package/OutlineEffect.unitypackage*を別のプロジェクトにインポートします
-- カスタム「Render Pipeline Asset」の*_Renderer*の接尾語あるアセットをクリックして、*Renderer Features*の下に*Outline Effect Render Feature*を追加します
+- カスタム「Render Pipeline Asset」の*_Renderer*の接尾語あるアセットをクリックして、*Renderer Features*の下に下記の*Renderer Feature*を追加します（同じ順番）：
+  - *Depth Normals Render Feature*
+  - *Outline Effect Render Feature*
 - 追加された*Outline Effect Render Feature*の下に、*Settings/Shader*に*OutlineEffect*のシェーダを割り当てます
 - シーンにある[volume](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/Volumes.html)に*Outline Effect*のオーバーライドを追加します
 - Volumeで*Enable*のトグルを有効にするとエフェクトは有効になります
 - Volumeでエフェクトの設定を変更できます
+
+**ご注意:** カメラに下記の設定をONにしてください：
+  - *Post Processing*
+  - *Depth Texture*

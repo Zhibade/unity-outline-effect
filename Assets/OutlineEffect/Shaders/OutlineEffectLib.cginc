@@ -24,6 +24,25 @@ inline fixed GetWeightValue(fixed Min, fixed Max, fixed Value)
 }
 
 /**
+ * Gets the normal value from the Depth + normals buffer for the corresponding UV
+ *
+ * @param DepthNormalBuffer - Camera's depth + view normal texture (output from the internal Unity shader)
+ * @param Uv - UV value of the pixel to get the normals from
+ *
+ * @return Normals for the corresponding pixel
+ */
+fixed3 GetNormalsFromBuffer(sampler2D DepthNormalsBuffer, float2 Uv)
+{
+    fixed depthPlaceHolder; // Only used so that we can use Unity's own DecodeDepthNormal function.
+    fixed3 normals;
+
+    fixed4 data = tex2D(DepthNormalsBuffer, Uv);
+    DecodeDepthNormal(data, depthPlaceHolder, normals);
+
+    return normals;
+}
+
+/**
  * Performs the outline effect calculation based on the given depth.
  *
  * @param DepthBuffer - Camera's depth texture
@@ -65,4 +84,36 @@ fixed GetDepthBasedOutline(sampler2D DepthBuffer,
     // Composite outline with distance mask
 
     return cutoffOutline * farDistanceCutoffMask * nearDistanceCutoffMask;
+}
+
+/**
+ * Performs the outline effect calculation based on the given view normals.
+ *
+ * @param DepthNormalsBuffer - Camera's depth + view normal texture (output from the internal Unity shader)
+ * @param ScreenSize - Camera's dimensions (in most cases this is just _ScreenParams built-in parameter)
+ * @param Uv - Current pixel's UV
+ * @param Width - Width of the outline (pixels)
+ * @param Cutoff - Difference cutoff value for the outline. Smaller values show smaller details with an outline
+ *
+ * @return Outline mask as a single value (white = outline)
+ */
+fixed GetNormalBasedOutline(sampler2D DepthNormalsBuffer, float4 ScreenSize, float2 Uv, uint Width = 1, float Cutoff = 0.1)
+{
+    // Compare current pixel with neighboring pixels (up, down, left, right) to determine edges
+
+    float2 pixelToUvRatio = float2(1 / ScreenSize.x, 1 / ScreenSize.y); 
+    
+    fixed3 currentNormal = GetNormalsFromBuffer(DepthNormalsBuffer, Uv);
+
+    float2 uvOffset = float2(pixelToUvRatio.x * Width, pixelToUvRatio.y * Width);
+
+    fixed3 leftPixelNormal = GetNormalsFromBuffer(DepthNormalsBuffer, float2(Uv.x - uvOffset.x, Uv.y));
+    fixed3 rightPixelNormal = GetNormalsFromBuffer(DepthNormalsBuffer, float2(Uv.x + uvOffset.x, Uv.y));
+    fixed3 upPixelNormal = GetNormalsFromBuffer(DepthNormalsBuffer, float2(Uv.x, Uv.y - uvOffset.y));
+    fixed3 downPixelNormal = GetNormalsFromBuffer(DepthNormalsBuffer, float2(Uv.x, Uv.y + uvOffset.y));
+
+    fixed3 normalComparison = (currentNormal - leftPixelNormal) + (currentNormal - rightPixelNormal) + (currentNormal - upPixelNormal) + (currentNormal - downPixelNormal);
+    fixed cutoffOutline = step(Cutoff, saturate(length(normalComparison)));
+
+    return cutoffOutline;
 }

@@ -14,12 +14,18 @@ using UnityEditor.Rendering;
 sealed class OutlineEffectEditor : VolumeComponentEditor
 {
     SerializedDataParameter isEnabled;
+
     SerializedDataParameter outlineColor;
     SerializedDataParameter outlineStrength;
     SerializedDataParameter outlineWidth;
     SerializedDataParameter outlineCutoff;
     SerializedDataParameter outlineNearFadeOutLimits;
     SerializedDataParameter outlineFarFadeOutLimits;
+
+    SerializedDataParameter normalOutlineStrength;
+    SerializedDataParameter normalOutlineWidth;
+    SerializedDataParameter normalOutlineCutoff;
+
     SerializedDataParameter fillStrength;
     SerializedDataParameter fillColor;
 
@@ -28,12 +34,18 @@ sealed class OutlineEffectEditor : VolumeComponentEditor
         PropertyFetcher<OutlineEffect> propertyFetcher = new PropertyFetcher<OutlineEffect>(serializedObject);
 
         isEnabled = Unpack(propertyFetcher.Find(x => x.isEnabled));
+
         outlineColor = Unpack(propertyFetcher.Find(x => x.outlineColor));
         outlineStrength = Unpack(propertyFetcher.Find(x => x.outlineStrength));
         outlineWidth = Unpack(propertyFetcher.Find(x => x.outlineWidth));
         outlineCutoff = Unpack(propertyFetcher.Find(x => x.outlineCutoffValue));
         outlineNearFadeOutLimits = Unpack(propertyFetcher.Find(x => x.outlineNearFadeOutLimits));
         outlineFarFadeOutLimits = Unpack(propertyFetcher.Find(x => x.outlineFarFadeOutLimits));
+
+        normalOutlineStrength = Unpack(propertyFetcher.Find(x => x.normalOutlineStrength));
+        normalOutlineWidth = Unpack(propertyFetcher.Find(x => x.normalOutlineWidth));
+        normalOutlineCutoff = Unpack(propertyFetcher.Find(x => x.normalOutlineCutoffValue));
+
         fillStrength = Unpack(propertyFetcher.Find(x => x.fillStrength));
         fillColor = Unpack(propertyFetcher.Find(x => x.fillColor));
     }
@@ -44,7 +56,7 @@ sealed class OutlineEffectEditor : VolumeComponentEditor
 
         PropertyField(isEnabled, EditorGUIUtility.TrTextContent("Enable"));
 
-        EditorGUILayout.LabelField("Outline", EditorStyles.miniLabel);
+        EditorGUILayout.LabelField("Outline (Depth Based)", EditorStyles.miniLabel);
 
         PropertyField(outlineColor, EditorGUIUtility.TrTextContent("Color"));
         PropertyField(outlineStrength, EditorGUIUtility.TrTextContent("Strength"));
@@ -52,6 +64,12 @@ sealed class OutlineEffectEditor : VolumeComponentEditor
         PropertyField(outlineCutoff, EditorGUIUtility.TrTextContent("Cutoff"));
         PropertyField(outlineNearFadeOutLimits, EditorGUIUtility.TrTextContent("Near Fade Out Limits"));
         PropertyField(outlineFarFadeOutLimits, EditorGUIUtility.TrTextContent("Far Fade Out Limits"));
+
+        EditorGUILayout.LabelField("Outline (Normal Based)", EditorStyles.miniLabel);
+
+        PropertyField(normalOutlineStrength, EditorGUIUtility.TrTextContent("Strength"));
+        PropertyField(normalOutlineWidth, EditorGUIUtility.TrTextContent("Width"));
+        PropertyField(normalOutlineCutoff, EditorGUIUtility.TrTextContent("Cutoff"));
 
         EditorGUILayout.LabelField("Fill", EditorStyles.miniLabel);
 
