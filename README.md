@@ -1,13 +1,13 @@
 ## 日本語は下記です。
 
 # Overview
-![Sample Render 01](https://github.com/Zhibade/unity-outline-effect/raw/master/Docs/Render01.jpg)
-![Sample Render 02](https://github.com/Zhibade/unity-outline-effect/raw/master/Docs/Render02.jpg)
-![Settings](https://github.com/Zhibade/unity-outline-effect/raw/master/Docs/Settings.jpg)
+![Sample Render 01](https://github.com/Zhibade/unity-outline-effect/raw/main/Docs/Render01.jpg)
+![Sample Render 02](https://github.com/Zhibade/unity-outline-effect/raw/main/Docs/Render02.jpg)
+![Settings](https://github.com/Zhibade/unity-outline-effect/raw/main/Docs/Settings.jpg)
 
-Outline post process effect implementation in the Unity's universal pipeline.
+Outline post process effect implementation on the Unity's universal pipeline.
 
-It uses depth + normal buffers to generate the outline.
+It uses depth + normal buffers to generate the outline. Please see tooltip on each of the post-process effect settings for a more detailed description on what each setting does.
 
 
 # How to use (on this project)
@@ -49,6 +49,8 @@ It uses depth + normal buffers to generate the outline.
 
 # 概要
 Unityのユニバーサルレンダリングパイプラインでの輪郭のポストプロセス特殊効果。
+
+深度と法線のバッファーに基づくエフェクトです。各設定のツールチップに詳しいエフェクトの使い方の説明があります。
 
 
 # 使い方（当プロジェクト）
