@@ -76,7 +76,7 @@ Unityのユニバーサルレンダリングパイプラインでの輪郭のポ
 
 # 使い方（別のプロジェクト。カスタム「[Render Pipeline Asset](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@10.2/manual/universalrp-asset.html)」がある場合）
 - このリポジトリの*Package/OutlineEffect.unitypackage*を別のプロジェクトにインポートします
-- カスタム「Render Pipeline Asset」の*_Renderer*の接尾語あるアセットをクリックして、*Renderer Features*の下に下記の*Renderer Feature*を追加します（同じ順番）：
+- カスタム「Render Pipeline Asset」の *_Renderer*の接尾語あるアセットをクリックして、*Renderer Features*の下に下記の*Renderer Feature*を追加します（同じ順番）：
   - *Depth Normals Render Feature*
   - *Outline Effect Render Feature*
 - 追加された*Outline Effect Render Feature*の下に、*Settings/Shader*に*OutlineEffect*のシェーダを割り当てます
