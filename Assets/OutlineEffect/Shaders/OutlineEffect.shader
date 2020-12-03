@@ -79,20 +79,31 @@ Shader "Hidden/OutlineEffect"
 
             fixed4 frag (v2f i) : SV_Target
             {
+                // Camera buffer + fill color composite
+
                 fixed4 render = tex2D(_MainTex, i.uv);
                 fixed4 bgRenderComposite = lerp(render, _FillColor, _FillStrength);
 
-                float4 nearAndFarFadeOut = float4(_OutlineNearAndFarFadeOut.x, _OutlineNearAndFarFadeOut.y,
-                                                  _OutlineNearAndFarFadeOut.z, _OutlineNearAndFarFadeOut.w);
+                // Get outlines and composite together
 
                 fixed depthOutlineMask = GetDepthBasedOutline(_CameraDepthTexture, _ScreenParams, i.uv,
-                                                              _OutlineWidth, _OutlineCutoff, nearAndFarFadeOut); // White = outline
+                                                              _OutlineWidth, _OutlineCutoff); // White = outline
 
                 fixed normalOutlineMask = GetNormalBasedOutline(_CameraDepthNormalsTexture, _ScreenParams, i.uv,
                                                                 _NormalOutlineWidth, _NormalOutlineCutoff); // While = outline
                 normalOutlineMask = lerp(0, normalOutlineMask, _NormalOutlineStrength);
 
                 fixed outline = saturate(depthOutlineMask + normalOutlineMask);
+
+                // Get fade out mask and apply it to the final outline
+
+                float4 nearAndFarFadeOut = float4(_OutlineNearAndFarFadeOut.x, _OutlineNearAndFarFadeOut.y,
+                                                  _OutlineNearAndFarFadeOut.z, _OutlineNearAndFarFadeOut.w);
+
+                fixed fadeOutMask = GetFadeOutMask(_CameraDepthTexture, i.uv, nearAndFarFadeOut);
+                outline *= fadeOutMask;
+
+                // Do final composite of fill + colored outline
 
                 fixed4 composite = lerp(bgRenderComposite, _OutlineColor, outline * _OutlineStrength); // Composite with background
                 return composite;

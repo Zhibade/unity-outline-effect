@@ -55,21 +55,24 @@ sealed class OutlineEffectEditor : VolumeComponentEditor
         EditorGUILayout.LabelField("General", EditorStyles.miniLabel);
 
         PropertyField(isEnabled, EditorGUIUtility.TrTextContent("Enable"));
+        PropertyField(outlineColor, EditorGUIUtility.TrTextContent("Color"));
 
         EditorGUILayout.LabelField("Outline (Depth Based)", EditorStyles.miniLabel);
 
-        PropertyField(outlineColor, EditorGUIUtility.TrTextContent("Color"));
         PropertyField(outlineStrength, EditorGUIUtility.TrTextContent("Strength"));
         PropertyField(outlineWidth, EditorGUIUtility.TrTextContent("Width"));
         PropertyField(outlineCutoff, EditorGUIUtility.TrTextContent("Cutoff"));
-        PropertyField(outlineNearFadeOutLimits, EditorGUIUtility.TrTextContent("Near Fade Out Limits"));
-        PropertyField(outlineFarFadeOutLimits, EditorGUIUtility.TrTextContent("Far Fade Out Limits"));
 
         EditorGUILayout.LabelField("Outline (Normal Based)", EditorStyles.miniLabel);
 
         PropertyField(normalOutlineStrength, EditorGUIUtility.TrTextContent("Strength"));
         PropertyField(normalOutlineWidth, EditorGUIUtility.TrTextContent("Width"));
         PropertyField(normalOutlineCutoff, EditorGUIUtility.TrTextContent("Cutoff"));
+
+        EditorGUILayout.LabelField("Fade Out", EditorStyles.miniLabel);
+
+        PropertyField(outlineNearFadeOutLimits, EditorGUIUtility.TrTextContent("Near Fade Out Limits"));
+        PropertyField(outlineFarFadeOutLimits, EditorGUIUtility.TrTextContent("Far Fade Out Limits"));
 
         EditorGUILayout.LabelField("Fill", EditorStyles.miniLabel);
 

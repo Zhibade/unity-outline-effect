@@ -50,13 +50,10 @@ fixed3 GetNormalsFromBuffer(sampler2D DepthNormalsBuffer, float2 Uv)
  * @param Uv - Current pixel's UV
  * @param Width - Width of the outline (pixels)
  * @param Cutoff - Depth cutoff value for the outline. Smaller values show smaller details with an outline
- * @param NearAndFarFadeOut - Near and far fade out start and end distances. (X & Y = Near fade out start and end, Z & W = Far fade out start and end)
  *
  * @return Outline mask as a single value (white = outline)
  */
-fixed GetDepthBasedOutline(sampler2D DepthBuffer,
-                           float4 ScreenSize, float2 Uv, uint Width = 1, float Cutoff = 0.001,
-                           float4 NearAndFarFadeOut = float4(0.00001, 0.00001, 10000, 10000))
+fixed GetDepthBasedOutline(sampler2D DepthBuffer, float4 ScreenSize, float2 Uv, uint Width = 1, float Cutoff = 0.001)
 {
     // Compare current pixel with neighboring pixels (up, down, left, right) to determine edges
 
@@ -73,7 +70,23 @@ fixed GetDepthBasedOutline(sampler2D DepthBuffer,
     fixed outline = (currentDepth - leftPixelDepth) + (currentDepth - rightPixelDepth) + (currentDepth - upPixelDepth) + (currentDepth - downPixelDepth);
     fixed cutoffOutline = step(Cutoff, saturate(outline));
 
+    return cutoffOutline;
+}
+
+/**
+ * Gets the corresponding fade out mask for the given fade out distances
+ *
+ * @param DepthBuffer - Camera's depth buffer
+ * @param Uv - UV of the current pixel
+ * @param NearAndFarFadeOut - Near and far fade out start and end distances. (X & Y = Near fade out start and end, Z & W = Far fade out start and end)
+ *
+ * @return Fade out mask (black is completely fade out)
+ */
+fixed GetFadeOutMask(sampler2D DepthBuffer, float2 Uv, float4 NearAndFarFadeOut = float4(0.00001, 0.00001, 10000, 10000))
+{
     // Apply near and far distance fade out
+
+    fixed currentDepth = tex2D(DepthBuffer, Uv).r;
 
     fixed depthInMeters = LinearEyeDepth(currentDepth);
     fixed farDistanceWeight = GetWeightValue(NearAndFarFadeOut.z, NearAndFarFadeOut.w, depthInMeters);
@@ -81,9 +94,7 @@ fixed GetDepthBasedOutline(sampler2D DepthBuffer,
     fixed nearDistanceCutoffMask = GetWeightValue(NearAndFarFadeOut.x, NearAndFarFadeOut.y, depthInMeters); // Getting black to white mask for all values beyond the near distance
     fixed farDistanceCutoffMask = (1 - farDistanceWeight); // Getting black mask for all values beyond the far distance
 
-    // Composite outline with distance mask
-
-    return cutoffOutline * farDistanceCutoffMask * nearDistanceCutoffMask;
+    return farDistanceCutoffMask * nearDistanceCutoffMask;
 }
 
 /**
