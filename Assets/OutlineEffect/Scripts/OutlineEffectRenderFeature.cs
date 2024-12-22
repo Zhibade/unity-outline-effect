@@ -1,4 +1,4 @@
-﻿/* Copyright (C) 2020 - Jose Ivan Lopez Romo - All rights reserved
+﻿/* Copyright (C) 2024 - Jose Ivan Lopez Romo - All rights reserved
  *
  * This file is part of the UnityOutlineEffect project found in the
  * following repository: https://github.com/Zhibade/unity-outline-effect
@@ -20,15 +20,42 @@ public class OutlineEffectRenderFeature : ScriptableRendererFeature
 
     public OutlineEffectSettings settings = new OutlineEffectSettings();
     OutlineEffectRenderPass outlineEffectRenderPass;
+    Material material;
 
     public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
     {
-        outlineEffectRenderPass.Setup(renderer.cameraColorTarget);
-        renderer.EnqueuePass(outlineEffectRenderPass);
+        if (outlineEffectRenderPass == null || settings.Shader == null)
+        {
+            return;
+        }
+
+        if (renderingData.cameraData.cameraType == CameraType.Game)
+        {
+            outlineEffectRenderPass.Setup();
+            renderer.EnqueuePass(outlineEffectRenderPass);
+        }
     }
 
     public override void Create()
     {
-        outlineEffectRenderPass = new OutlineEffectRenderPass(settings.RenderPassEvent, settings.Shader);
+        if (settings.Shader == null)
+        {
+            return;
+        }
+
+        material = new Material(settings.Shader);
+        outlineEffectRenderPass = new OutlineEffectRenderPass(settings.RenderPassEvent, material);
+    }
+
+    protected override void Dispose(bool disposing)
+    {
+        if (Application.isPlaying)
+        {
+            Destroy(material);
+        }
+        else
+        {
+            DestroyImmediate(material);
+        }
     }
 }

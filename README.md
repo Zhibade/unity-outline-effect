@@ -9,6 +9,8 @@ Outline post process effect implementation on the Unity's universal pipeline.
 
 It uses depth + normal buffers to generate the outline. Please see tooltip on each of the post-process effect settings for a more detailed description on what each setting does.
 
+**NOTE:** Current version will only work in Unity 6 (due to Render Graph support). Please checkout [this old commit](https://github.com/Zhibade/unity-outline-effect/commit/cb6637f4c7d77e133b192dc5fa0b322b5e63f940) for Unity 2020-2023 support.
+
 
 # How to use (on this project)
 - Open the project
@@ -50,7 +52,9 @@ It uses depth + normal buffers to generate the outline. Please see tooltip on ea
 # 概要
 Unityのユニバーサルレンダリングパイプラインでの輪郭のポストプロセス特殊効果。
 
-深度と法線のバッファーに基づくエフェクトです。各設定のツールチップに詳しいエフェクトの使い方の説明があります。
+深度と法線のバッファーに基づくエフェクトです。設定の詳細はそれぞれのツールチップをご確認ください。
+
+**注意：** 最新版はUnity 6のRenderGraph対応なのでUnity 2023以下対応していません。Unity 2023以下のご利用は[こちらのコミット](https://github.com/Zhibade/unity-outline-effect/commit/cb6637f4c7d77e133b192dc5fa0b322b5e63f940)をチェックアウトしてください。
 
 
 # 使い方（当プロジェクト）

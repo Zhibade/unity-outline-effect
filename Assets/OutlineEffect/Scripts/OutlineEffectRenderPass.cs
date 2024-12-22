@@ -1,4 +1,4 @@
-﻿/* Copyright (C) 2020 - Jose Ivan Lopez Romo - All rights reserved
+﻿/* Copyright (C) 2024 - Jose Ivan Lopez Romo - All rights reserved
  *
  * This file is part of the UnityOutlineEffect project found in the
  * following repository: https://github.com/Zhibade/unity-outline-effect
@@ -8,6 +8,8 @@
 
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Rendering.RenderGraphModule;
+using UnityEngine.Rendering.RenderGraphModule.Util;
 using UnityEngine.Rendering.Universal;
 
 public class OutlineEffectRenderPass : ScriptableRenderPass
@@ -25,63 +27,78 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
     static readonly string NORMAL_OUTLINE_WIDTH_PROPERTY_NAME = "_NormalOutlineWidth";
     static readonly string NORMAL_OUTLINE_CUTOFF_PROPERTY_NAME = "_NormalOutlineCutoff";
 
-    static readonly int MAIN_TEXTURE_PROPERTY_ID = Shader.PropertyToID("_MainTex");
-    static readonly int TEMP_RENDER_TARGET_PROPERTY_ID = Shader.PropertyToID("_TempRenderTarget");
-
-    static readonly string OUTLINE_EFFECT_TAG = "Outline Effect";
+    static readonly string TARGET_TEXTURE_PROPERTY_NAME = "_OutlineTexture";
 
     Material material;
-    OutlineEffect outlineEffect;
-    RenderTargetIdentifier renderTargetIdentifier;
 
-    public OutlineEffectRenderPass(RenderPassEvent renderPassEvent, Shader shader)
+    public OutlineEffectRenderPass(RenderPassEvent renderPassEvent, Material material)
     {
         this.renderPassEvent = renderPassEvent;
 
-        if (shader == null)
+        if (material == null)
         {
-            Debug.LogError("Outline effect shader not found");
+            Debug.LogError("Outline effect material not found");
             return;
         }
 
-        material = CoreUtils.CreateEngineMaterial(shader);
+        this.material = material;
     }
 
-    public override void Execute(ScriptableRenderContext context, ref RenderingData renderingData)
+    public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
     {
-        if (material == null || !renderingData.cameraData.postProcessEnabled)
-        {
-            return;
-        }
-
         VolumeStack stack = VolumeManager.instance.stack;
-        outlineEffect = stack.GetComponent<OutlineEffect>();
+        OutlineEffect outlineEffect = stack.GetComponent<OutlineEffect>();
 
-        if (outlineEffect == null || !outlineEffect.IsActive())
+        if (!outlineEffect.IsActive())
         {
             return;
         }
 
-        CommandBuffer buffer = CommandBufferPool.Get(OUTLINE_EFFECT_TAG);
-        Render(buffer, ref renderingData);
+        UniversalResourceData resourceData = frameData.Get<UniversalResourceData>();
 
-        context.ExecuteCommandBuffer(buffer);
-        CommandBufferPool.Release(buffer);
+        if (resourceData.isActiveTargetBackBuffer)
+        {
+            return;
+        }
+
+        TextureHandle srcCamColor = resourceData.activeColorTexture;
+
+        TextureDesc colorTextureDesc = srcCamColor.GetDescriptor(renderGraph);
+        colorTextureDesc.depthBufferBits = 0;
+        colorTextureDesc.name = TARGET_TEXTURE_PROPERTY_NAME;
+        
+        TextureHandle target = renderGraph.CreateTexture(colorTextureDesc);
+
+        UpdateSettings(outlineEffect);
+
+        // Prevent material preview error
+        if (!srcCamColor.IsValid() || !target.IsValid())
+        {
+            return;
+        }
+
+        // Blit
+        RenderGraphUtils.BlitMaterialParameters blitParams = new(srcCamColor, target, material, 0);
+        renderGraph.AddBlitPass(blitParams, "OutlineRenderPass");
+
+        resourceData.cameraColor = target;
     }
 
-    public void Setup(in RenderTargetIdentifier targetIdentifier)
+    /// <summary>
+    /// Enables depth & world normal passes so their textures can be used in the outline pass
+    /// </summary>
+    public void Setup()
     {
-        renderTargetIdentifier = targetIdentifier;
+        ConfigureInput(ScriptableRenderPassInput.Depth);
+        ConfigureInput(ScriptableRenderPassInput.Normal);
     }
 
-    void Render(CommandBuffer buffer, ref RenderingData data)
+    void UpdateSettings(OutlineEffect outlineEffect)
     {
-        ref CameraData cameraData = ref data.cameraData;
-        RenderTargetIdentifier sourceRenderTarget = renderTargetIdentifier;
-        int targetRenderTarget = TEMP_RENDER_TARGET_PROPERTY_ID;
-
-        int screenWidth = cameraData.camera.scaledPixelWidth;
-        int screenHeight = cameraData.camera.scaledPixelHeight;
+        if (outlineEffect == null || !outlineEffect.IsActive() || material == null)
+        {
+            return;
+        }
 
         Vector4 fadeOutDistances = new Vector4(outlineEffect.outlineNearFadeOutLimits.value.x, outlineEffect.outlineNearFadeOutLimits.value.y,
                                                outlineEffect.outlineFarFadeOutLimits.value.x, outlineEffect.outlineFarFadeOutLimits.value.y);
@@ -98,12 +115,5 @@ public class OutlineEffectRenderPass : ScriptableRenderPass
 
         material.SetColor(COLOR_PROPERTY_NAME, outlineEffect.fillColor.value);
         material.SetFloat(COLOR_STRENGTH_PROPERTY_NAME, outlineEffect.fillStrength.value);
-
-        // Copy to temporary render target and render to actual render target
-
-        buffer.SetGlobalTexture(MAIN_TEXTURE_PROPERTY_ID, sourceRenderTarget);
-        buffer.GetTemporaryRT(targetRenderTarget, screenWidth, screenHeight, 0, FilterMode.Point, RenderTextureFormat.Default);
-        buffer.Blit(sourceRenderTarget, targetRenderTarget);
-        buffer.Blit(targetRenderTarget, sourceRenderTarget, material, 0);
     }
 }

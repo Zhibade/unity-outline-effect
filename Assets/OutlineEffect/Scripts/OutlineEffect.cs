@@ -1,4 +1,4 @@
-﻿/* Copyright (C) 2020 - Jose Ivan Lopez Romo - All rights reserved
+﻿/* Copyright (C) 2024 - Jose Ivan Lopez Romo - All rights reserved
  *
  * This file is part of the UnityOutlineEffect project found in the
  * following repository: https://github.com/Zhibade/unity-outline-effect
